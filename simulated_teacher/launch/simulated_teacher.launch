@@ -1,0 +1,158 @@
+<?xml version="1.0"?>
+<!-- This is a launch file for an example on how to bringup of the race perception architecture-->
+<launch>
+<!-- this flag will configure the system to run with nodes or nodelets-->
+<arg name="use_nodelets" default="0"/>
+<arg name="use_standalone" default="false"/>
+<!--<arg name="use_pr2" default="0"/>-->
+<arg name="pdb_source" default="default_pdb"/>
+
+
+<!--    <group if="$(arg use_standalone)">
+        <arg name="pi/2" value="1.5707963267948966" />
+        <arg name="optical_rotate" value="0 0 0 0 0 0" />
+        <node pkg="tf" type="static_transform_publisher" name="standalone_static_tf_map_to_kinect"
+            args="$(arg optical_rotate) /head_mount_kinect_rgb_optical_frame /map 30" />
+    </group>-->
+
+    <group ns="/perception">
+
+	<!-- _________________________________-->
+	<!--|                                 |-->
+	<!--|             Memory 		      |-->
+	<!--|_________________________________|-->
+
+		<!--Launches a race_perception_db node(let) -->
+	<include file="$(find backbone)/launch/bringup.launch">
+	    <arg name="use_nodelets" value="$(arg use_nodelets)" />
+	    <arg name="pdb_source" value="$(arg pdb_source)" />
+	    <arg name="name" value="perception_db" />-->
+	</include> 
+
+	
+	<!-- Launches the nodelet_manager -->
+	<group if="$(arg use_nodelets)">
+	    <node pkg="nodelet" type="nodelet" name="nodelet_manager" args="manager" output="screen" required="true">
+		<param name="num_worker_threads" value="10"/>
+	    </node>
+	</group>
+	
+	
+	<!-- _________________________________-->
+	<!--|                                 |-->
+	<!--|         Global Param            |-->
+	<!--|_________________________________|-->
+
+
+	<!-- name of approach -->
+	<arg name="name_of_approach" default="Local_HDP" />
+	<param name="/perception/name_of_approach" type="string" value = "$(arg name_of_approach)"/>
+	
+	<!-- set home_address parameter which represents the path of the dataset -->
+	<arg name="home_address" default="$(env HOME)/datasets/washington" />
+	<param name="/perception/home_address" type="string" value = "$(arg home_address)"/>
+
+	<!-- set dictionary_address parameter which represents the path of the dictionary file -->
+	<arg name="dictionary_address" default="$(env HOME)/dictionaries/wash-clusters90810.txt" />
+	<param name="/perception/dictionary_address" type="string" value = "$(arg dictionary_address)"/>
+
+	<!-- name of topic_modeling_service -->
+	<arg name="topic_modeling_service" default="/local_HDP_service" />
+	<param name="/perception/topic_modeling_service" type="string" value = "$(arg topic_modeling_service)"/>
+	<!-- The following topic modelling have been implemeneted and can be used: 
+		"/local_HDP_service", 
+	--> 
+
+
+
+
+	<!-- dictionary size -->
+	<arg name="dictionary_size" default="90" />
+	<param name="/perception/dictionary_size" type="int" value = "$(arg dictionary_size)"/>
+
+	<!-- Spin image parameters. -->
+	<arg name="spin_image_width" default="8" />
+	<param name="/perception/spin_image_width" type="int" value = "$(arg spin_image_width)"/>
+	<arg name="spin_image_support_lenght" default="0.2" />
+	<param name="/perception/spin_image_support_lenght" type="double" value = "$(arg spin_image_support_lenght)"/>
+	<arg name="subsample_spinimages" default="0" />
+	<param name="/perception/subsample_spinimages" type="int" value = "$(arg subsample_spinimages)"/>
+
+	<arg name="uniform_sampling_size" default="0.03" />
+	<param name="/perception/uniform_sampling_size" type="double" value = "$(arg uniform_sampling_size)"/>
+	
+	
+	<!-- DOWNSAMPLING 0 = FLASE, 1 = TRUE-->
+	<arg name="downsampling" default="0" /> 
+	<param name="/perception/downsampling" type="bool" value = "$(arg downsampling)"/>
+	
+	<arg name="downsampling_voxel_size" default="1" />
+	<param name="/perception/downsampling_voxel_size" type="double" value = "$(arg downsampling_voxel_size)"/>
+	
+
+	<!-- Simulated teacher parameters. -->
+	<arg name="protocol_threshold" default="0.67" />
+	<param name="/perception/protocol_threshold" type="double" value = "$(arg protocol_threshold)"/>
+	
+	<arg name="user_sees_no_improvment_const" default="100" />
+	<param name="/perception/user_sees_no_improvment_const" type="int" value = "$(arg user_sees_no_improvment_const)"/>
+	
+	<arg name="window_size" default="3" />
+	<param name="/perception/window_size" type="int" value = "$(arg window_size)"/>
+	
+	<arg name="number_of_categories" default="51" />
+	<param name="/perception/number_of_categories" type="int" value = "$(arg number_of_categories)"/>
+
+	<arg name="voxel_size_for_keypoints" default="0.01" />
+	<param name="/perception/voxel_size_for_keypoints" type="double" value = "$(arg voxel_size_for_keypoints)"/>
+
+	<arg name="recognition_threshold" default="200000000000000" />
+	<param name="/perception/recognition_threshold" type="double" value = "$(arg recognition_threshold)"/>
+	
+	<arg name="randorder" default="false" />
+	<param name="/perception/randorder" type="bool" value = "$(arg randorder)"/>
+
+
+	<group ns="/pipeline1">
+			    
+	    <!-- _________________________________-->
+	    <!--|                                 |-->
+	    <!--|        object descriptor        |-->
+	    <!--|_________________________________|--> 
+		
+		<!-- <include file="$(find race_object_descriptor_deep_learning)/launch/bringup.launch">
+            <arg name="use_nodelets" value="$(arg use_nodelets)" />
+            <arg name="name" value="object_descriptor_deep_learning" />
+	    </include> -->
+
+		<!-- _________________________________-->
+		<!--|                                 |-->
+		<!--|       object_recognition        |-->
+		<!--|_________________________________|-->
+
+            <!-- <include file="$(find race_deep_learning_based_object_recognition)/launch/bringup.launch">
+            <arg name="use_nodelets" value="$(arg use_nodelets)" />
+            <arg name="name" value="deep_learning_based_object_recognition" />
+	    </include> -->
+
+		<!-- _________________________________-->
+		<!--|                                 |-->
+		<!--|       race_simulated_user       |-->
+		<!--|_________________________________|-->
+            
+	    <include file="$(find simulated_teacher)/launch/bringup.launch">
+            <arg name="use_nodelets" value="$(arg use_nodelets)" />
+            <arg name="name" value="simulated_teacher_local_HDP_based_descriptor" />
+	    </include>
+
+
+		<!-- _________________________________-->
+		<!--|                                 |-->
+		<!--|         Global Param            |-->
+		<!--|_________________________________|-->
+	</group>
+    </group>
+
+</launch>
+
+

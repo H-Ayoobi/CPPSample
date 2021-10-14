@@ -1,0 +1,7 @@
+<library path="lib/libhnt">
+	<class name="hnt/HntNodelet" type="hnt::HntNodelet" base_class_type="nodelet::Nodelet">
+	<description> 
+		Launches a 
+	</description>
+	</class>
+</library>

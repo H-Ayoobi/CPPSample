@@ -1,0 +1,25 @@
+<package>
+  <description brief="simulated_teacher">
+
+        simulated_teacher
+
+  </description>
+  <author>Unknown</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+	<depend package="roscpp"/>
+	<depend package="std_msgs"/>
+	<depend package="roslib"/>
+	<depend package="nodelet"/>
+	<depend package="sensor_msgs"/>
+	<depend package="backbone"/>
+	<depend package="pcl_conversions"/>
+	<rosdep name="boost" />
+	<depend package="topic_modeling_services"/>
+	<export>
+    	<nodelet plugin="${prefix}/nodelets.xml"/>
+    	<cpp cflags="-I${prefix}/include " lflags="-L${prefix}/lib -lsimulated_teacher" />
+	</export>
+
+</package>
+
