@@ -1,4 +1,4 @@
-# CPPSample
+# Part of a project with C++ as a sample
 This repository is only a sample for part of my C++ code from a larger project called Local-HDP for a robotic vision project
 
 # Simulated Teacher
