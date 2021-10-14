@@ -1,5 +1,5 @@
 # Part of a project with C++ as a sample
-This repository is only a sample for part of my C++ code from a larger project called Local-HDP for a robotic vision project
+This repository is only a sample for part of my C++ code from a larger project called Local-HDP for robotic vision
 
 # Simulated Teacher
 In the Local-HDP project, a simulated teacher is responsible for introducing different 3D object-views to the model and ask the model to recognize their categories and provide correcting feedbacks when needed. 
